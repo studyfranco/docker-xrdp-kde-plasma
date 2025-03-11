@@ -14,9 +14,11 @@ RUN set -x \
     && apt-get update -oAcquire::AllowInsecureRepositories=true \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-unauthenticated deb-multimedia-keyring --no-install-recommends \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y dolphin tar wget curl pigz jq mpv vlc kde-plasma-desktop breeze krename gprename xrdp firefox-esr firefox-esr-l10n-fr mediainfo mkvtoolnix mkvtoolnix-gui ffmpeg libpam-ldapd --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y dolphin tar wget curl pigz jq mpv vlc kde-plasma-desktop breeze krename gprename xrdp firefox-esr firefox-esr-l10n-fr mediainfo mkvtoolnix mkvtoolnix-gui ffmpeg libpam-ldapd mesa-utils rsync --no-install-recommends \
+    && apt purge -yy xscreensaver light-locker \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*  \
+    && rm -rf /var/cache/apt \
     && rm -rf /var/log/*
 
 # Configuration de la session KDE Plasma pour xrdp
