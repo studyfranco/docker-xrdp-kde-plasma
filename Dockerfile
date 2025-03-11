@@ -4,7 +4,7 @@ LABEL maintainer="studyfranco@hotmail.fr"
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN set -x \
-    && ls -al /etc/apt/sources.list.d \
+    && cat /etc/apt/sources.list.d/debian.sources \
     && echo "deb http://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list.d/debian.sources \
     && apt update \
     && apt install -y ca-certificates \
