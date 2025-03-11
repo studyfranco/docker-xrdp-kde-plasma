@@ -4,12 +4,12 @@ LABEL maintainer="studyfranco@hotmail.fr"
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN set -x \
-    && cat /etc/apt/sources.list.d/debian.sources \
-    && echo "deb http://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list.d/debian.sources \
+    && rm /etc/apt/sources.list.d/debian.sources \
+    && echo "deb http://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list \
     && apt update \
     && apt install -y ca-certificates \
-    && apt dist-upgrade \
-    && echo "deb https://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list.d/debian.sources \
+    && apt dist-upgrade -y \
+    && echo "deb https://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list \
     && echo "deb https://www.deb-multimedia.org testing main non-free" >> /etc/apt/sources.list.d/multimedia.list \
     && apt-get update -oAcquire::AllowInsecureRepositories=true \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-unauthenticated deb-multimedia-keyring \
