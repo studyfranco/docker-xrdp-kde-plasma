@@ -9,6 +9,7 @@ RUN set -x \
     && apt update \
     && apt install -y ca-certificates apt-transport-https --no-install-recommends \
     && echo "deb https://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list \
+    && apt update \
     && apt dist-upgrade -y \
     && echo "deb https://www.deb-multimedia.org testing main non-free" >> /etc/apt/sources.list.d/multimedia.list \
     && apt-get update -oAcquire::AllowInsecureRepositories=true \
@@ -20,7 +21,8 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp locales kwin-addons kwin-x11 kate pulseaudio dolphin htop net-tools tar wget curl pigz jq mpv vlc kde-plasma-desktop breeze krename gprename firefox-esr firefox-esr-l10n-fr mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg libpam-ldapd mesa-utils rsync xfonts-base fonts-noto-color-emoji --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp locales kwin-addons kwin-x11 kate pulseaudio dolphin htop net-tools tar wget curl pigz jq mpv vlc kde-plasma-desktop breeze krename gprename firefox-esr firefox-esr-l10n-fr mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg libpam-ldapd mesa-utils mesa-va-drivers mesa-vulkan-drivers libgl1-mesa-dri libglx-mesa0 rsync xfonts-base fonts-noto-color-emoji --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y intel-media-va-driver
     && apt purge -yy xscreensaver light-locker \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*  \
