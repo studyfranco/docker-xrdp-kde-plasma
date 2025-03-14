@@ -36,5 +36,5 @@ RUN echo "startplasma-x11" > /etc/skel/.xsession && \
 # Exposer le port xrdp
 EXPOSE 3389
 
-COPY entrypoint.sh /entrypoint.sh
+COPY --chmod=0755 entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]
