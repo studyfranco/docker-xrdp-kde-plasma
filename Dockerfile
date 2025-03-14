@@ -38,6 +38,3 @@ EXPOSE 3389
 
 COPY entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]
-
-# Démarrage de xrdp en mode non-démon pour que le conteneur reste actif
-CMD ["/usr/sbin/xrdp", "--nodaemon"]
