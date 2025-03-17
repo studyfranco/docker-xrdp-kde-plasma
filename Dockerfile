@@ -3,13 +3,16 @@ FROM debian:testing as builder
 # Install packages
 
 ENV DEBIAN_FRONTEND noninteractive
-RUN sed -i "s/# deb-src/deb-src/g" /etc/apt/sources.list
-RUN apt-get -y update
-RUN apt-get -yy upgrade
-ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
-    libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex \
-    bison libxml2-dev dpkg-dev libcap-dev"
-RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
+RUN set -x \
+    && rm /etc/apt/sources.list.d/debian.sources \
+    && echo "deb http://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list \
+    && apt update \
+    && apt install -y ca-certificates apt-transport-https --no-install-recommends \
+    && echo "deb https://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list \
+    && echo "deb-src https://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
+    && apt update \
+    && apt dist-upgrade -y
+RUN apt-get -yy install  sudo apt-utils software-properties-common git autoconf pkg-config libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex bison libxml2-dev dpkg-dev libcap-dev
 
 
 # Build xrdp
