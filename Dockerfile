@@ -23,6 +23,7 @@ RUN set -x \
     && apt update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano locales kwin-addons kwin-x11 kate pulseaudio dolphin htop net-tools tar wget curl pigz jq mpv vlc kde-plasma-desktop breeze krename gprename firefox-esr firefox-esr-l10n-fr mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers libgl1-mesa-dri libglx-mesa0 rsync xfonts-base fonts-noto-color-emoji --no-install-recommends \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y intel-media-va-driver \
+    && apt dist-upgrade -y \
     && apt purge -yy xscreensaver light-locker \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*  \
