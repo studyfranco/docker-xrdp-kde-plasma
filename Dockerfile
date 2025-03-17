@@ -65,7 +65,7 @@ RUN set -x \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*  \
     && rm -rf /var/cache/apt \
-    && rm -rf /var/log/* /var/tmp/* /tmp/*
+    && rm -rf /var/log/* /var/tmp/* /tmp/* \
     && mkdir -p /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
