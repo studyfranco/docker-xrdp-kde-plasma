@@ -1,3 +1,40 @@
+FROM debian:testing-slim as builder
+
+# Install packages
+
+ENV DEBIAN_FRONTEND noninteractive
+RUN sed -i "s/# deb-src/deb-src/g" /etc/apt/sources.list
+RUN apt-get -y update
+RUN apt-get -yy upgrade
+ENV BUILD_DEPS="git autoconf pkg-config libssl-dev libpam0g-dev \
+    libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex \
+    bison libxml2-dev dpkg-dev libcap-dev"
+RUN apt-get -yy install  sudo apt-utils software-properties-common $BUILD_DEPS
+
+
+# Build xrdp
+
+WORKDIR /tmp
+RUN apt-get source pulseaudio
+RUN apt-get build-dep -yy pulseaudio
+WORKDIR /tmp/pulseaudio-11.1
+RUN dpkg-buildpackage -rfakeroot -uc -b
+WORKDIR /tmp
+RUN git clone --recursive https://github.com/neutrinolabs/xrdp.git
+WORKDIR /tmp/xrdp
+RUN ./bootstrap
+RUN ./configure
+RUN make
+RUN make install
+WORKDIR /tmp
+RUN  apt -yy install libpulse-dev
+RUN git clone --recursive https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
+WORKDIR /tmp/pulseaudio-module-xrdp
+RUN ./bootstrap && ./configure PULSE_DIR=/tmp/pulseaudio-11.1
+RUN make
+RUN mkdir -p /tmp/so
+RUN cp src/.libs/*.so /tmp/so
+
 FROM debian:testing-slim
 LABEL maintainer="studyfranco@hotmail.fr"
 
@@ -21,7 +58,7 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano locales kwin-addons kwin-x11 kate pulseaudio dolphin htop net-tools tar wget curl pigz jq mpv vlc kde-plasma-desktop breeze krename gprename firefox-esr firefox-esr-l10n-fr mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers libgl1-mesa-dri libglx-mesa0 rsync xfonts-base fonts-noto-color-emoji --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano locales kwin-addons kwin-x11 kate pulseaudio dolphin htop net-tools tar wget curl pigz jq mpv vlc kde-plasma-desktop breeze krename gprename firefox-esr firefox-esr-l10n-fr mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers libgl1-mesa-dri libglx-mesa0 rsync xfonts-base fonts-noto-color-emoji xorgxrdp dbus-x11 7zip bash-completion plasma-wallpapers-addons plasma-workspace-wallpapers systemsettings zip acl ark --no-install-recommends \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y intel-media-va-driver \
     && apt dist-upgrade -y \
     && apt purge -yy xscreensaver light-locker \
@@ -29,6 +66,19 @@ RUN set -x \
     && rm -rf /var/lib/apt/lists/*  \
     && rm -rf /var/cache/apt \
     && rm -rf /var/log/* /var/tmp/* /tmp/*
+    && mkdir -p /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
+#ADD bin /usr/bin
+#ADD etc /etc
+    
+# Configure
+#RUN cp /etc/X11/xrdp/xorg.conf /etc/X11 && \
+#    sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config && \
+#    sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini && \
+#    locale-gen en_US.UTF-8 && \
+#    echo "xfce4-session" > /etc/skel/.Xclients && \
+#    rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
 
 # Configuration de la session KDE Plasma pour xrdp
 RUN echo "startplasma-x11" > /etc/skel/.xsession && \
