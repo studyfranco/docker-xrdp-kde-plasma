@@ -9,7 +9,7 @@ start_xrdp_services() {
     rm -rf /var/run/xrdp/xrdp.pid 2> /dev/null
 
     # Use exec ... to forward SIGNAL to child processes
-    /etc/init.d/nslcd start &
+    /usr/sbin/sssd -d 0x0020 -D &
     xrdp-sesman &
     exec xrdp --nodaemon
 }
