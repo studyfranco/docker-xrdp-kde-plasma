@@ -13,7 +13,6 @@ RUN set -x \
     && apt update \
     && apt dist-upgrade -y
 RUN apt-get -yy install sudo apt-utils git autoconf pkg-config libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex bison libxml2-dev dpkg-dev libcap-dev build-essential cdbs devscripts equivs fakeroot libxkbfile-dev libtool libltdl-dev gcc make automake
-#software-properties-common
 
 # Build xrdp
 
@@ -37,7 +36,8 @@ RUN ./bootstrap && ./configure PULSE_DIR=$(find /tmp -maxdepth 1 -type d -name '
 RUN make
 RUN mkdir -p /tmp/so \
     && cp src/.libs/*.so /tmp/so \
-    && cp /tmp/pulseaudio-module-xrdp/instfiles/pulseaudio-xrdp.desktop /tmp/so/
+    && cp /tmp/pulseaudio-module-xrdp/instfiles/pulseaudio-xrdp.desktop /tmp/so/ \
+    && cp /tmp/pulseaudio-module-xrdp/instfiles/load_pa_modules.sh /tmp/so/
 RUN make install
 
 FROM debian:testing-slim
@@ -72,24 +72,26 @@ RUN set -x \
     && rm -rf /var/cache/apt \
     && rm -rf /var/log/* /var/tmp/* /tmp/* \
     && mkdir -p /var/lib/xrdp-pulseaudio-installer
+    && mkdir -p /usr/lib/pulse-compiled/modules \
+    && mkdir -p /usr/local/libexec/pulseaudio-module-xrdp
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
-COPY --from=builder /tmp/so/pulseaudio-xrdp.desktop /etc/xdg/autostart
-#ADD bin /usr/bin
-#ADD etc /etc
+COPY --from=builder /tmp/so/module-xrdp-source.so /usr/lib/pulse-compiled/modules
+COPY --from=builder /tmp/so/module-xrdp-sink.so /usr/lib/pulse-compiled/modules
     
 # Configure
 #RUN cp /etc/X11/xrdp/xorg.conf /etc/X11 && \
 #    sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config && \
 #    sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini && \
 #    locale-gen en_US.UTF-8 && \
-#    echo "xfce4-session" > /etc/skel/.Xclients && \
-#    rm -rf /etc/xrdp/rsakeys.ini /etc/xrdp/*.pem
 
-RUN mkdir /usr/libexec/pulseaudio-module-xrdp \
+RUN mkdir -p /usr/libexec/pulseaudio-module-xrdp \
     && wget -O- https://raw.githubusercontent.com/neutrinolabs/pulseaudio-module-xrdp/refs/heads/devel/instfiles/load_pa_modules.sh | tee /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh \
     && chmod +x /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh \
     && wget -O- https://raw.githubusercontent.com/neutrinolabs/pulseaudio-module-xrdp/refs/heads/devel/instfiles/pulseaudio-xrdp.desktop.in | tee /etc/xdg/autostart/pulseaudio-xrdp.desktop
+
+COPY --from=builder /tmp/so/pulseaudio-xrdp.desktop /etc/xdg/autostart
+COPY --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xrdp
 
 # Configuration de la session KDE Plasma pour xrdp
 RUN echo "startplasma-x11" > /etc/skel/.xsession && \
