@@ -21,7 +21,7 @@ WORKDIR /tmp
 RUN apt-get source pulseaudio
 RUN apt-get build-dep -yy pulseaudio
 WORKDIR /tmp/pulseaudio-11.1
-RUN dpkg-buildpackage -rfakeroot -uc -b
+RUN dch --create --package pulseaudio --newversion 11.1-1 "Initial release" && dpkg-buildpackage -rfakeroot -uc -b
 WORKDIR /tmp
 RUN git clone --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
