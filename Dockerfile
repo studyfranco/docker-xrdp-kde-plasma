@@ -1,4 +1,4 @@
-FROM debian:testing as builder
+FROM debian:testing-slim as builder
 
 # Install packages
 
@@ -12,7 +12,7 @@ RUN set -x \
     && echo "deb-src https://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
     && apt update \
     && apt dist-upgrade -y
-RUN apt-get -yy install sudo apt-utils git autoconf pkg-config libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex bison libxml2-dev dpkg-dev libcap-dev
+RUN apt-get -yy install sudo apt-utils git autoconf pkg-config libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex bison libxml2-dev dpkg-dev libcap-dev build-essential cdbs devscripts equivs fakeroot
 #software-properties-common
 
 # Build xrdp
@@ -61,7 +61,7 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano locales kwin-addons kwin-x11 kate pulseaudio dolphin htop net-tools tar wget curl pigz jq mpv vlc kde-plasma-desktop breeze krename gprename firefox-esr firefox-esr-l10n-fr mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers libgl1-mesa-dri libglx-mesa0 rsync xfonts-base fonts-noto-color-emoji xorgxrdp dbus-x11 7zip bash-completion plasma-wallpapers-addons plasma-workspace-wallpapers systemsettings zip acl ark sed --no-install-recommends \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano locales kwin-addons kwin-x11 kate pulseaudio dolphin dolphin-plugins ffmpegthumbs degraphics-thumbnailers htop net-tools tar wget curl pigz jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration konsole kfind kdialog breeze breeze-gtk-theme krename kwalletmanager plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers libgl1-mesa-dri libglx-mesa0 rsync xfonts-base fonts-noto-color-emoji xorgxrdp dbus-x11 7zip bash-completion plasma-systemmonitor systemsettings zip acl ark sed okular --no-install-recommends \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y intel-media-va-driver \
     && apt dist-upgrade -y \
     && apt purge -yy xscreensaver light-locker \
