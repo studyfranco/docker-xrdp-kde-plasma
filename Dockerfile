@@ -19,7 +19,7 @@ RUN apt-get -yy install sudo apt-utils git autoconf pkg-config libssl-dev libpam
 
 WORKDIR /tmp
 RUN apt-get source pulseaudio
-RUN apt-get build-dep -yy pulseaudio \
+RUN apt-get build-dep -yy pulseaudio xrdp \
     && cd $(find . -maxdepth 1 -type d -name 'pulseaudio-*' | head -n 1) \
     && dpkg-buildpackage -rfakeroot -uc -b
 WORKDIR /tmp
