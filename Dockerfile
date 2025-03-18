@@ -36,7 +36,7 @@ WORKDIR /tmp/pulseaudio-module-xrdp
 RUN ./bootstrap && ./configure PULSE_DIR=$(find /tmp -maxdepth 1 -type d -name 'pulseaudio-*[0-9]*' | head -n 1)
 RUN make
 RUN mkdir -p /tmp/so \
-    && cp src/.libs/*.so /tmp/so
+    && cp src/.libs/*.so /tmp/so \
     && cp /tmp/pulseaudio-module-xrdp/instfiles/pulseaudio-xrdp.desktop /tmp/so/
 RUN make install
 
