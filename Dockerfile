@@ -19,9 +19,9 @@ RUN apt-get -yy install sudo apt-utils git autoconf pkg-config libssl-dev libpam
 
 WORKDIR /tmp
 RUN apt-get source pulseaudio
-RUN apt-get build-dep -yy pulseaudio
-WORKDIR /tmp/pulseaudio-11.1
-RUN dch --create --package pulseaudio --newversion 11.1-1 "Initial release" && dpkg-buildpackage -rfakeroot -uc -b
+RUN apt-get build-dep -yy pulseaudio \
+    && cd $(find . -maxdepth 1 -type d -name 'pulseaudio-*' | head -n 1) \
+    && dpkg-buildpackage -rfakeroot -uc -b
 WORKDIR /tmp
 RUN git clone --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
@@ -33,10 +33,10 @@ WORKDIR /tmp
 RUN  apt -yy install libpulse-dev
 RUN git clone --recursive https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/pulseaudio-module-xrdp
-RUN ./bootstrap && ./configure PULSE_DIR=/tmp/pulseaudio-11.1
+RUN ./bootstrap && ./configure PULSE_DIR=/tmp/$(find . -maxdepth 1 -type d -name 'pulseaudio-*' | head -n 1)
 RUN make
-RUN mkdir -p /tmp/so
-RUN cp src/.libs/*.so /tmp/so
+RUN mkdir -p /tmp/so \
+    && cp src/.libs/*.so /tmp/so
 
 FROM debian:testing-slim
 LABEL maintainer="studyfranco@hotmail.fr"
