@@ -33,7 +33,7 @@ WORKDIR /tmp
 RUN  apt -yy install libpulse-dev
 RUN git clone --recursive https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/pulseaudio-module-xrdp
-RUN ./bootstrap && ./configure PULSE_DIR=/tmp/$(find /tmp -maxdepth 1 -type d -name 'pulseaudio-*' | head -n 1)
+RUN ./bootstrap && ./configure PULSE_DIR=$(find /tmp -maxdepth 1 -type d -name 'pulseaudio-*[0-9]*' | head -n 1)
 RUN make
 RUN mkdir -p /tmp/so \
     && cp src/.libs/*.so /tmp/so
