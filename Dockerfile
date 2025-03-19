@@ -77,6 +77,9 @@ COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-insta
 COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-source.so /usr/lib/pulse-compiled/modules
 COPY --from=builder /tmp/so/module-xrdp-sink.so /usr/lib/pulse-compiled/modules
+
+COPY --chmod=0755 wallpapers/* /usr/share/wallpapers/
+COPY --chmod=0755 etc/skel/* etc/skel/
     
 # Configure
 #RUN cp /etc/X11/xrdp/xorg.conf /etc/X11 && \
