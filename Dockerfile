@@ -63,8 +63,7 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano locales kwin-addons kwin-x11 kate pulseaudio dolphin dolphin-plugins ffmpegthumbs kdegraphics-thumbnailers htop net-tools tar wget curl pigz jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme krename kwalletmanager plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers libgl1-mesa-dri libglx-mesa0 rsync xfonts-base fonts-noto-color-emoji xorgxrdp dbus-x11 7zip bash-completion plasma-systemmonitor systemsettings zip acl ark sed okular pkg-config pulseaudio-module-gsettings vainfo --no-install-recommends \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y intel-media-va-driver \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano locales kwin-addons kwin-x11 kate pulseaudio dolphin dolphin-plugins ffmpegthumbs kdegraphics-thumbnailers htop net-tools tar wget curl pigz jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers libgl1-mesa-dri libglx-mesa0 rsync xfonts-base fonts-noto-color-emoji xorgxrdp dbus-x11 7zip bash-completion plasma-systemmonitor systemsettings zip acl ark sed okular pkg-config pulseaudio-module-gsettings vainfo xsettings-kde kde-config-gtk-style intel-media-va-driver-non-free --no-install-recommends \
     && apt dist-upgrade -y \
     && apt purge -yy xscreensaver light-locker \
     && apt clean \
@@ -94,7 +93,7 @@ COPY --from=builder /tmp/so/pulseaudio-xrdp.desktop /etc/xdg/autostart
 COPY --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xrdp
 
 # Configuration de la session KDE Plasma pour xrdp
-RUN echo "pulseaudio --start &\nstartplasma-x11" > /etc/skel/.xsession \
+RUN echo "mkdir -p /run/user/$(id -u) && chmod 700 /run/user/$(id -u)\npulseaudio --start &\nstartplasma-x11" > /etc/skel/.xsession \
     && cp /etc/skel/.xsession /root/ \
     && echo "export XDG_RUNTIME_DIR=/run/user/$(id -u)" >> /etc/skel/.bashrc \
     && sed -i "s/AllowRootLogin=true/AllowRootLogin=false/g;" /etc/xrdp/sesman.ini \

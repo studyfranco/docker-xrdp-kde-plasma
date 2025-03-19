@@ -20,28 +20,33 @@ stop_xrdp_services() {
     exit 0
 }
 
-for peripherique in /dev/dri/card*; do
-    if [ -e "$peripherique" ]; then
-        # Récupérer le nom du groupe propriétaire du périphérique
-        local nom_groupe=$(stat -c '%G' "$peripherique")
-        if [ "$nom_groupe" = "UNKNOWN" ]; then
-            # Si le nom du groupe est inconnu, utiliser le GID pour créer un nouveau groupe
-            local gid=$(stat -c '%g' "$peripherique")
-            nom_groupe="groupe_dri_$gid"
-            # Créer le groupe si il n'existe pas déjà
-            if ! grep -q "^$nom_groupe:" /etc/group; then
-                groupadd -g "$gid" "$nom_groupe"
+add_perif_group() {
+    for peripherique in /dev/dri/*; do
+        if [ -e "$peripherique" ]; then
+            # Récupérer le nom du groupe propriétaire du périphérique
+            local nom_groupe=$(stat -c '%G' "$peripherique")
+            if [ "$nom_groupe" = "UNKNOWN" ]; then
+                # Si le nom du groupe est inconnu, utiliser le GID pour créer un nouveau groupe
+                local gid=$(stat -c '%g' "$peripherique")
+                nom_groupe="groupe_dri_$gid"
+                # Créer le groupe si il n'existe pas déjà
+                if ! grep -q "^$nom_groupe:" /etc/group; then
+                    groupadd -g "$gid" "$nom_groupe"
+                fi
+            fi
+            # Mettre à jour /etc/security/group.conf pour ajouter les utilisateurs à ce groupe lors de la connexion
+            local group_conf_line="*;*;*;Al0000-24000;$nom_groupe"
+            if ! grep -Fxq "$group_conf_line" /etc/security/group.conf; then
+                echo "$group_conf_line" >> /etc/security/group.conf
             fi
         fi
-        # Mettre à jour /etc/security/group.conf pour ajouter les utilisateurs à ce groupe lors de la connexion
-        local group_conf_line="*;*;*;Al0000-24000;$nom_groupe"
-        if ! grep -Fxq "$group_conf_line" /etc/security/group.conf; then
-            echo "$group_conf_line" >> /etc/security/group.conf
-        fi
-    fi
-done
+    done
+}
 
 echo Entryponit script is Running...
+
+add_perif_group &
+mkdir -p /run/user &
 
 echo -e "starting xrdp services...\n"
 
