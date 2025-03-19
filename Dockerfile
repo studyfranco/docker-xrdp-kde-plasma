@@ -96,7 +96,8 @@ COPY --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xr
 # Configuration de la session KDE Plasma pour xrdp
 RUN echo "startplasma-x11" > /etc/skel/.xsession && \
     cp /etc/skel/.xsession /root/ \
-    && sed -i "s/AllowRootLogin=true/AllowRootLogin=false/g;" /etc/xrdp/sesman.ini
+    && sed -i "s/AllowRootLogin=true/AllowRootLogin=false/g;" /etc/xrdp/sesman.ini \
+    && cp /usr/lib/pulse-compiled/modules/* $(find /usr/lib -maxdepth 1 -type d -name 'pulseaudio-*[0-9]*' | head -n 1)/modules
 
 # Exposer le port xrdp
 EXPOSE 3389
