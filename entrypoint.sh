@@ -9,7 +9,7 @@ start_xrdp_services() {
 
     # Use exec ... to forward SIGNAL to child processes
     /usr/sbin/sssd -d 0x0100 --logger=files -D &
-    /usr/bin/pulseaudio --system -D
+    #/usr/bin/pulseaudio --system -D
     xrdp-sesman &
     exec xrdp --nodaemon
 }
