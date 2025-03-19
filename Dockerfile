@@ -93,9 +93,9 @@ COPY --from=builder /tmp/so/pulseaudio-xrdp.desktop /etc/xdg/autostart
 COPY --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xrdp
 
 # Configuration de la session KDE Plasma pour xrdp
-RUN echo "mkdir -p /run/user/$(id -u) && chmod 700 /run/user/$(id -u)\npulseaudio --start &\nstartplasma-x11" > /etc/skel/.xsession \
+RUN echo "mkdir -p /run/user/\$(id -u) && chmod 700 /run/user/\$(id -u)\npulseaudio --start &\nstartplasma-x11" > /etc/skel/.xsession \
     && cp /etc/skel/.xsession /root/ \
-    && echo "export XDG_RUNTIME_DIR=/run/user/$(id -u)" >> /etc/skel/.bashrc \
+    && echo "export XDG_RUNTIME_DIR=/run/user/\$(id -u)" >> /etc/skel/.bashrc \
     && sed -i "s/AllowRootLogin=true/AllowRootLogin=false/g;" /etc/xrdp/sesman.ini \
     && cp /usr/lib/pulse-compiled/modules/* $(find /usr/lib -maxdepth 1 -type d -name 'pulse*-*[0-9]*' | head -n 1)/modules
 

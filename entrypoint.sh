@@ -46,7 +46,7 @@ add_perif_group() {
 echo Entryponit script is Running...
 
 add_perif_group &
-mkdir -p /run/user &
+mkdir -p /run/user && chmod 777 /run/user &
 
 echo -e "starting xrdp services...\n"
 
