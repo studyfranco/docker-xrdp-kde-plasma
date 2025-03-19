@@ -73,10 +73,10 @@ RUN set -x \
     && mkdir -p /var/lib/xrdp-pulseaudio-installer \
     && mkdir -p /usr/lib/pulse-compiled/modules \
     && mkdir -p /usr/local/libexec/pulseaudio-module-xrdp
-ADD --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
-ADD --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
-ADD --from=builder /tmp/so/module-xrdp-source.so /usr/lib/pulse-compiled/modules
-ADD --from=builder /tmp/so/module-xrdp-sink.so /usr/lib/pulse-compiled/modules
+COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
+COPY --from=builder /tmp/so/module-xrdp-source.so /usr/lib/pulse-compiled/modules
+COPY --from=builder /tmp/so/module-xrdp-sink.so /usr/lib/pulse-compiled/modules
 
 ADD --chmod=0755 wallpapers/* /usr/share/wallpapers/
 ADD --chmod=0755 etc/skel/.* etc/skel/
@@ -92,8 +92,8 @@ RUN mkdir -p /usr/libexec/pulseaudio-module-xrdp \
     && chmod +x /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh \
     && wget -O- https://raw.githubusercontent.com/neutrinolabs/pulseaudio-module-xrdp/refs/heads/devel/instfiles/pulseaudio-xrdp.desktop.in | tee /etc/xdg/autostart/pulseaudio-xrdp.desktop
 
-ADD --from=builder /tmp/so/pulseaudio-xrdp.desktop /etc/xdg/autostart
-ADD --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xrdp
+COPY --from=builder /tmp/so/pulseaudio-xrdp.desktop /etc/xdg/autostart
+COPY --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xrdp
 
 # Configuration de la session KDE Plasma pour xrdp
 RUN echo "mkdir -p /run/user/\$(id -u) && chmod 700 /run/user/\$(id -u)\npulseaudio --start &\nstartplasma-x11" > /etc/skel/.xsession \
