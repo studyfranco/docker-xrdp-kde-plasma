@@ -71,7 +71,7 @@ RUN set -x \
     && rm -rf /var/lib/apt/lists/*  \
     && rm -rf /var/cache/apt \
     && rm -rf /var/log/* /var/tmp/* /tmp/* \
-    && mkdir -p /var/lib/xrdp-pulseaudio-installer
+    && mkdir -p /var/lib/xrdp-pulseaudio-installer \
     && mkdir -p /usr/lib/pulse-compiled/modules \
     && mkdir -p /usr/local/libexec/pulseaudio-module-xrdp
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
