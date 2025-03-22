@@ -48,7 +48,6 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN set -x \
     && rm /etc/apt/sources.list.d/debian.sources \
     && echo "Acquire::Languages { \"fr\"; \"de\"; \"ru\"; \"en\";};" > /etc/apt/apt.conf.d/docker-no-languages \
-    && echo "LANG=en_US.UTF-8\nLC_MESSAGES=en_US.UTF-8" > /etc/default/locale \
     && echo "deb http://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list \
     && apt update \
     && apt install -y ca-certificates apt-transport-https --no-install-recommends \
@@ -56,12 +55,14 @@ RUN set -x \
     && echo "deb https://deb.debian.org/debian/ unstable main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
     && echo "Package: *\nPin: release a=unstable\nPin-Priority: 490" > /etc/apt/preferences.d/list \
     && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales locales-all \
+    && echo "C.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nen_GB.UTF-8 UTF-8\nen_US.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nru_RU.UTF-8 UTF-8" >> /etc/locale.gen \
+    && echo "LANG=en_US.UTF-8\nLC_MESSAGES=en_US.UTF-8" > /etc/default/locale \
+    && locale-gen \
     && apt dist-upgrade -y \
     && echo "deb https://www.deb-multimedia.org testing main non-free" >> /etc/apt/sources.list.d/multimedia.list \
     && apt-get update -oAcquire::AllowInsecureRepositories=true \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-unauthenticated deb-multimedia-keyring --no-install-recommends \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales locales-all \
-    && locale-gen \
     && apt autopurge -yy \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*  \
