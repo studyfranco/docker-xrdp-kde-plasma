@@ -55,10 +55,12 @@ RUN set -x \
     && echo "deb https://deb.debian.org/debian/ unstable main contrib non-free non-free-firmware" >> /etc/apt/sources.list \
     && echo "Package: *\nPin: release a=unstable\nPin-Priority: 490" > /etc/apt/preferences.d/list \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales locales-all \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales \
     && echo "C.UTF-8 UTF-8\nde_DE.UTF-8 UTF-8\nen_GB.UTF-8 UTF-8\nen_US.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nru_RU.UTF-8 UTF-8" >> /etc/locale.gen \
     && echo "LANG=en_US.UTF-8\nLC_MESSAGES=en_US.UTF-8" > /etc/default/locale \
+    && dpkg-reconfigure locales \
     && locale-gen \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y locales-all \
     && apt dist-upgrade -y \
     && echo "deb https://www.deb-multimedia.org testing main non-free" >> /etc/apt/sources.list.d/multimedia.list \
     && apt-get update -oAcquire::AllowInsecureRepositories=true \
