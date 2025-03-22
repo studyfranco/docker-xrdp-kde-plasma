@@ -45,7 +45,7 @@ LABEL maintainer="studyfranco@hotmail.fr"
 
 ENV DEBIAN_FRONTEND=noninteractive \
     LANG=en_US.UTF-8 \
-    LANGUAGE \
+    LANGUAGE= \
     LC_ADDRESS=fr_FR.UTF-8 \
     LC_IDENTIFICATION=fr_FR.UTF-8 \
     LC_MEASUREMENT=fr_FR.UTF-8 \
