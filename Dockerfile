@@ -48,6 +48,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN set -x \
     && rm /etc/apt/sources.list.d/debian.sources \
     && echo "Acquire::Languages { \"fr\"; \"de\"; \"ru\"; \"en\";};" > /etc/apt/apt.conf.d/docker-no-languages \
+    && echo "LANG=en_US.UTF-8\nLC_MESSAGES=en_US.UTF-8" > /etc/default/locale \
     && echo "deb http://deb.debian.org/debian/ testing main contrib non-free non-free-firmware" > /etc/apt/sources.list \
     && apt update \
     && apt install -y ca-certificates apt-transport-https --no-install-recommends \
