@@ -84,14 +84,13 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano kwin-addons kwin-x11 kate pulseaudio dolphin dolphin-plugins ffmpegthumbs kdegraphics-thumbnailers htop net-tools tar wget curl pigz jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools rsync xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xauth xdg-user-dirs xdg-utils 7zip bash-completion plasma-systemmonitor systemsettings zip acl ark sed okular pkg-config pulseaudio-module-gsettings vainfo xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd gdbm-l10n qt*-translations-l10n qttranslations*-l10n vim --no-install-recommends \
-    && apt purge -yy xscreensaver light-locker \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano less kwin-addons kwin-x11 kate pulseaudio dolphin dolphin-plugins ffmpegthumbs kdegraphics-thumbnailers htop net-tools tar wget curl pigz jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools rsync xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xauth xdg-user-dirs xdg-utils 7zip bash-completion plasma-systemmonitor systemsettings zip acl ark sed okular pkg-config pulseaudio-module-gsettings vainfo xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd gdbm-l10n qt*-translations-l10n qttranslations*-l10n vim gosu --no-install-recommends \
+    && apt purge -yy xscreensaver light-locker sudo \
     && apt dist-upgrade -y \
     && apt autopurge -yy \
     && apt clean \
-    && rm -rf /var/lib/apt/lists/*  \
-    && rm -rf /var/cache/apt \
-    && rm -rf /var/log/* /var/tmp/* /tmp/* \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/* \
+    && mv /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.old \
     && mkdir -p /var/lib/xrdp-pulseaudio-installer \
     && mkdir -p /usr/lib/pulse-compiled/modules \
     && mkdir -p /usr/local/libexec/pulseaudio-module-xrdp
@@ -102,12 +101,7 @@ COPY --from=builder /tmp/so/module-xrdp-sink.so /usr/lib/pulse-compiled/modules
 
 ADD --chmod=0755 wallpapers /usr/share/wallpapers
 ADD --chmod=0755 etc/skel /etc/skel
-    
-# Configure
-#RUN cp /etc/X11/xrdp/xorg.conf /etc/X11 && \
-#    sed -i "s/console/anybody/g" /etc/X11/Xwrapper.config && \
-#    sed -i "s/xrdp\/xorg/xorg/g" /etc/xrdp/sesman.ini && \
-#    locale-gen en_US.UTF-8 && \
+ADD --chmod=0755 etc/xrdp /etc/xrdp
 
 RUN mkdir -p /usr/libexec/pulseaudio-module-xrdp \
     && wget -O- https://raw.githubusercontent.com/neutrinolabs/pulseaudio-module-xrdp/refs/heads/devel/instfiles/load_pa_modules.sh | tee /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh \
@@ -121,7 +115,11 @@ COPY --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xr
 RUN echo "xdg-user-dirs-update &\nmkdir -p /run/user/\$(id -u) && chmod 700 /run/user/\$(id -u)\nexport XDG_RUNTIME_DIR=/run/user/\$(id -u)\npulseaudio --start &\nstartplasma-x11" > /etc/skel/.xsession \
     && cp /etc/skel/.xsession /root/ \
     && echo "export XDG_RUNTIME_DIR=/run/user/\$(id -u)" >> /etc/skel/.bashrc \
+    && cp /etc/skel/.bashrc /root/.bashrc \
     && sed -i "s/AllowRootLogin=true/AllowRootLogin=false/g;" /etc/xrdp/sesman.ini \
+    && sed -i "s/KillDisconnected=false/KillDisconnected=true/g;" /etc/xrdp/sesman.ini \
+    && sed -i "s/DisconnectedTimeLimit=0/DisconnectedTimeLimit=172800/g;" /etc/xrdp/sesman.ini \
+    && sed -i "s/IdleTimeLimit=0/IdleTimeLimit=172800/g;" /etc/xrdp/sesman.ini \
     && cp /usr/lib/pulse-compiled/modules/* $(find /usr/lib -maxdepth 1 -type d -name 'pulse*-*[0-9]*' | head -n 1)/modules
 
 # Exposer le port xrdp

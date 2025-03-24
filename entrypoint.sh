@@ -8,10 +8,9 @@ start_xrdp_services() {
     rm -rf /var/run/xrdp/xrdp.pid 2> /dev/null
 
     # Use exec ... to forward SIGNAL to child processes
-    /usr/sbin/sssd -d 0x0100 --logger=files -D &
-    #/usr/bin/pulseaudio --system -D
+    mkdir /var/log/sssd && chown sssd /var/log/sssd && gosu "sssd" "/usr/sbin/sssd -d 0x0100 --logger=files -D" &
     xrdp-sesman &
-    exec xrdp --nodaemon
+    gosu "xrdp" "xrdp --nodaemon"
 }
 
 stop_xrdp_services() {
