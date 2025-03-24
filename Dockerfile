@@ -72,20 +72,19 @@ RUN set -x \
     && dpkg-reconfigure --frontend=noninteractive locales \
     && locale-gen \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y locales-all \
+    && DEBIAN_FRONTEND=noninteractive apt purge -yy sudo \
     && apt dist-upgrade -y \
     && echo "deb https://www.deb-multimedia.org testing main non-free" >> /etc/apt/sources.list.d/multimedia.list \
     && apt-get update -oAcquire::AllowInsecureRepositories=true \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-unauthenticated deb-multimedia-keyring --no-install-recommends \
     && apt autopurge -yy \
     && apt clean \
-    && rm -rf /var/lib/apt/lists/*  \
-    && rm -rf /var/cache/apt/* \
-    && rm -rf /var/log/* /var/tmp/* /tmp/*
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano less kwin-addons kwin-x11 kate pulseaudio dolphin dolphin-plugins ffmpegthumbs kdegraphics-thumbnailers htop net-tools tar wget curl pigz jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools rsync xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xauth xdg-user-dirs xdg-utils 7zip bash-completion plasma-systemmonitor systemsettings zip acl ark sed okular pkg-config pulseaudio-module-gsettings vainfo xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd gdbm-l10n qt*-translations-l10n qttranslations*-l10n vim gosu --no-install-recommends \
-    && apt purge -yy xscreensaver light-locker sudo \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp nano less kwin-addons kwin-x11 kate pulseaudio dolphin dolphin-plugins ffmpegthumbs kdegraphics-thumbnailers htop net-tools tar wget curl pigz jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools rsync xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xauth xdg-user-dirs xdg-utils 7zip bash-completion plasma-systemmonitor systemsettings zip acl ark sed okular pkg-config pulseaudio-module-gsettings vainfo xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd gdbm-l10n qt*-translations-l10n qttranslations*-l10n vim gosu --no-install-recommends --fix-missing \
+    && apt purge -yy xscreensaver light-locker \
     && apt dist-upgrade -y \
     && apt autopurge -yy \
     && apt clean \
