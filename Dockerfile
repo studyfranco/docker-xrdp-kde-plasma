@@ -79,7 +79,7 @@ RUN set -x \
     && echo "deb https://www.deb-multimedia.org testing main non-free" > /etc/apt/sources.list.d/multimedia.list \
     && apt-get update -oAcquire::AllowInsecureRepositories=true \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --allow-unauthenticated deb-multimedia-keyring --no-install-recommends \
-    rm /etc/apt/sources.list.d/multimedia.list \
+    && rm /etc/apt/sources.list.d/multimedia.list \
     && echo "Types: deb\nURIs: https://www.deb-multimedia.org\nSuites: testing\nComponents: main non-free\nEnabled: yes\nSigned-By: /usr/share/keyrings/deb-multimedia-keyring.pgp" > /etc/apt/sources.list.d/multimedia.sources \
     && echo "\nTypes: deb\nURIs: https://www.deb-multimedia.org\nSuites: stable\nComponents: main non-free\nEnabled: yes\nSigned-By: /usr/share/keyrings/deb-multimedia-keyring.pgp" >> /etc/apt/sources.list.d/multimedia.sources \
     && echo "\nTypes: deb\nURIs: https://www.deb-multimedia.org\nSuites: unstable\nComponents: main non-free\nEnabled: yes\nSigned-By: /usr/share/keyrings/deb-multimedia-keyring.pgp" >> /etc/apt/sources.list.d/multimedia.sources \
