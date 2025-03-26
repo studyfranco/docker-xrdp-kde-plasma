@@ -10,7 +10,7 @@ start_xrdp_services() {
     # Use exec ... to forward SIGNAL to child processes
     mkdir -p /var/log/sssd && chown sssd /var/log/sssd && gosu sssd /usr/sbin/sssd -d 0x0100 --logger=files -D &
     xrdp-sesman &
-    gosu xrdp /usr/sbin/xrdp --nodaemon
+    /usr/sbin/xrdp --nodaemon
 }
 
 stop_xrdp_services() {
