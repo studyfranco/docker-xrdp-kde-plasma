@@ -46,8 +46,16 @@ echo Entryponit script is Running...
 
 add_perif_group &
 mkdir -p /run/user && chmod 777 /run/user &
+mkdir -p /var/run/dbus && chown messagebus:messagebus /var/run/dbus &
+dbus-uuidgen > /var/lib/dbus/machine-id &
 
 echo -e "starting xrdp services...\n"
+if [ ! -f "/etc/xrdp/cert_local.pem" ]; then
+    if [ ! $CERTIFICATE_SUBJECT ]; then
+	    CERTIFICATE_SUBJECT="/C=US/ST=Some State/L=Some City/O=Some Org/OU=Some Unit/CN=Terminalserver"
+    fi
+    openssl req -x509 -newkey rsa:2048 -nodes -keyout /etc/xrdp/key_local.pem -out /etc/xrdp/cert_local.pem -days 365 -subj "$CERTIFICATE_SUBJECT"
+fi
 
 trap "stop_xrdp_services" SIGKILL SIGTERM SIGHUP SIGINT EXIT
 start_xrdp_services
