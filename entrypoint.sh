@@ -51,7 +51,7 @@ dbus-uuidgen > /var/lib/dbus/machine-id &
 
 echo -e "starting xrdp services...\n"
 if [ ! -f "/etc/xrdp/cert_local.pem" ]; then
-    openssl req -x509 -newkey ED25519 -nodes -keyout /etc/xrdp/key_local.pem -out /etc/xrdp/cert_local.pem -days 365 -subj "/CN=XRDP"
+    openssl req -x509 -newkey RSA:2048 -nodes -keyout /etc/xrdp/key_local.pem -out /etc/xrdp/cert_local.pem -days 365 -subj "/CN=XRDP"
 fi
 
 trap "stop_xrdp_services" SIGKILL SIGTERM SIGHUP SIGINT EXIT
