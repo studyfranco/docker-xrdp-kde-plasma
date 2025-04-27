@@ -52,11 +52,11 @@ ENV DEBIAN_FRONTEND=noninteractive \
 
 RUN set -x \
     && echo "de_DE.UTF-8 UTF-8\nen_GB.UTF-8 UTF-8\nen_US.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nru_RU.UTF-8 UTF-8" >> /etc/locale.gen \
-    && echo "LANG=en_US.UTF-8\nLC_MESSAGES=en_US.UTF-8\nLANGUAGE=" > /etc/default/locale \
+    && echo "LANG=en_US.UTF-8\nLC_MESSAGES=en_US.UTF-8\nLC_TIME=fr_FR.UTF-8\nLANGUAGE=" > /etc/default/locale \
     && dpkg-reconfigure --frontend=noninteractive locales \
     && locale-gen \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp kwin-addons kwin-x11 kwin-style-breeze kate pulseaudio dolphin dolphin-plugins ffmpegthumbs kdegraphics-thumbnailers jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools rsync xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted fonts-hack fonts-lmodern fonts-freefont-otf xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils 7zip plasma-systemmonitor systemsettings zip ark okular pkg-config pulseaudio-module-gsettings vainfo xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd gdbm-l10n qt*-translations-l10n qttranslations*-l10n qt*-gtk-platformtheme qt*-image-formats-plugins openssl fuse3 --no-install-recommends --fix-missing \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp kwin-addons kwin-x11 kwin-style-breeze kate pulseaudio dolphin dolphin-plugins ffmpegthumbs kdegraphics-thumbnailers jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools rsync xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted fonts-hack fonts-lmodern fonts-freefont-otf xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils 7zip plasma-systemmonitor systemsettings zip ark okular pkg-config pulseaudio-module-gsettings vainfo xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd gdbm-l10n qt*-translations-l10n qttranslations*-l10n qt*-gtk-platformtheme qt*-image-formats-plugins openssl fuse3 polkit-kde-agent-1 xdg-desktop-portal-kde --no-install-recommends --fix-missing \
     && apt purge -yy xscreensaver light-locker \
     && apt dist-upgrade -y \
     && apt autopurge -yy \
@@ -85,7 +85,7 @@ COPY --from=builder /tmp/so/pulseaudio-xrdp.desktop /etc/xdg/autostart
 COPY --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xrdp
 
 # Configuration de la session KDE Plasma pour xrdp
-RUN echo "xdg-user-dirs-update &\nmkdir -p /run/user/\$(id -u) && chmod 700 /run/user/\$(id -u)\nexport XDG_RUNTIME_DIR=/run/user/\$(id -u)\npulseaudio --start &\nexec dbus-launch --exit-with-session startplasma-x11" > /etc/skel/.xsession \
+RUN echo "xdg-user-dirs-update &\n. /etc/default/locale\nmkdir -p /run/user/\$(id -u) && chmod 700 /run/user/\$(id -u)\nexport XDG_RUNTIME_DIR=/run/user/\$(id -u)\npulseaudio --start &\nexec dbus-launch --exit-with-session startplasma-x11" > /etc/skel/.xsession \
     && cp /etc/skel/.xsession /root/ \
     && echo "export XDG_RUNTIME_DIR=/run/user/\$(id -u)" >> /etc/skel/.bashrc \
     && cp /etc/skel/.bashrc /root/.bashrc \
@@ -95,7 +95,8 @@ RUN echo "xdg-user-dirs-update &\nmkdir -p /run/user/\$(id -u) && chmod 700 /run
     && sed -i "s/IdleTimeLimit=0/IdleTimeLimit=172800/g;" /etc/xrdp/sesman.ini \
     && cp /usr/lib/pulse-compiled/modules/* $(find /usr/lib -maxdepth 1 -type d -name 'pulse*-*[0-9]*' | head -n 1)/modules \
     && echo 'allowed_users=anybody' > /etc/X11/Xwrapper.config \
-    && usermod -a -G ssl-cert xrdp
+    && usermod -a -G ssl-cert xrdp \
+    && echo "LANG=en_US.UTF-8\nLC_TIME=fr_FR.UTF-8" >> /etc/xrdp/sesman.ini
 
 # Exposer le port xrdp
 EXPOSE 3389
