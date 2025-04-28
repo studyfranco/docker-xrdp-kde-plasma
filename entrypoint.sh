@@ -8,6 +8,7 @@ start_xrdp_services() {
     rm -rf /var/run/xrdp/xrdp.pid 2> /dev/null
 
     # Use exec ... to forward SIGNAL to child processes
+    rm -rf /run/dbus/*; mkdir -p /run/dbus && dbus-daemon --system --fork &
     mkdir -p /var/log/sssd && /usr/sbin/sssd -d 0x0100 --logger=files -D &
     xrdp-sesman &
     /usr/sbin/xrdp --nodaemon
