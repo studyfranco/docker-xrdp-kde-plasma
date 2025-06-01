@@ -42,9 +42,17 @@ add_perif_group() {
     done
 }
 
+add_groups_essentials() {
+    local group_conf_line="*;*;*;Al0000-24000;fuse"
+    if ! grep -Fxq "$group_conf_line" /etc/security/group.conf; then
+        echo "$group_conf_line" >> /etc/security/group.conf
+    fi
+}
+
 echo Entryponit script is Running...
 
 add_perif_group &
+add_groups_essentials &
 mkdir -p /run/user && chmod 777 /run/user &
 mkdir -p /var/run/dbus && chown messagebus:messagebus /var/run/dbus &
 dbus-uuidgen > /var/lib/dbus/machine-id &
