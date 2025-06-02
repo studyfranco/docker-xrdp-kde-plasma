@@ -8,6 +8,7 @@ start_xrdp_services() {
     rm -rf /var/run/xrdp/xrdp.pid 2> /dev/null
 
     # Use exec ... to forward SIGNAL to child processes
+
     mkdir -p /var/log/sssd && /usr/sbin/sssd -d 0x0100 --logger=files -D &
     xrdp-sesman &
     /usr/sbin/xrdp --nodaemon
@@ -17,6 +18,12 @@ stop_xrdp_services() {
     xrdp --kill
     xrdp-sesman --kill
     exit 0
+}
+
+start_dbus() {
+    rm -rf /run/dbus/*; mkdir -p /run/dbus && dbus-daemon --system --fork &
+    sleep 2
+    /usr/libexec/udisks2/udisksd --no-debug &
 }
 
 add_perif_group() {
@@ -61,6 +68,8 @@ echo -e "starting xrdp services...\n"
 if [ ! -f "/etc/xrdp/cert_local.pem" ]; then
     openssl req -x509 -newkey RSA:2048 -nodes -keyout /etc/xrdp/key_local.pem -out /etc/xrdp/cert_local.pem -days 365 -subj "/CN=XRDP"
 fi
+
+start_dbus &
 
 trap "stop_xrdp_services" SIGKILL SIGTERM SIGHUP SIGINT EXIT
 start_xrdp_services
