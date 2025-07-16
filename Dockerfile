@@ -20,13 +20,47 @@ RUN set -x \
     && dpkg-reconfigure --frontend=noninteractive locales \
     && locale-gen \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins ffmpegthumbs kdegraphics-thumbnailers jq mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons kglobalacceld gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix mkvtoolnix-gui ffmpeg handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools rsync xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted fonts-hack fonts-lmodern fonts-freefont-otf fonts-stix fonts-texgyre xorgxrdp xutils x11-apps dbus-x11 dbus-user-session dbus-daemon xprintidle xloadimage xauth xdg-user-dirs xdg-utils 7zip plasma-systemmonitor systemsettings zip ark okular pkg-config vainfo xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd gdbm-l10n qt*-translations-l10n qttranslations*-l10n qt*-gtk-platformtheme qt*-image-formats-plugins openssl polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 pipewire-module-xrdp pipewire-audio pipewire pipewire-pulse wireplumber at-spi2-core gstreamer1.0-pipewire kio-fuse fuseiso file genisoimage udftools --no-install-recommends --fix-missing \
-    && apt purge -yy xscreensaver light-locker \
     && apt dist-upgrade -y \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN set -x \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential jq rsync zip 7zip pkg-config openssl --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN set -x \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpegthumbs mkvtoolnix ffmpeg --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN set -x \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools vainfo intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN set -x \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons kglobalacceld gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix-gui handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools xorgxrdp xutils x11-apps dbus-x11 dbus-user-session dbus-daemon xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration gdbm-l10n qt*-translations-l10n qttranslations*-l10n qt*-gtk-platformtheme qt*-image-formats-plugins polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 pipewire-module-xrdp pipewire-audio pipewire pipewire-pulse wireplumber at-spi2-core gstreamer1.0-pipewire kio-fuse kio-extras fuseiso file genisoimage udftools --no-install-recommends --fix-missing \
+    && apt purge -yy xscreensaver light-locker \
     && apt autopurge -yy \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/* \
     && mv /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.old
+
+RUN set -x \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted fonts-hack fonts-lmodern fonts-freefont-otf fonts-stix fonts-texgyre --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
 ADD --chmod=0755 wallpapers /usr/share/wallpapers
 ADD --chmod=0755 etc/skel /etc/skel
