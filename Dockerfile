@@ -34,7 +34,7 @@ RUN mkdir -p /tmp/so \
     && cp /tmp/pulseaudio-module-xrdp/instfiles/load_pa_modules.sh /tmp/so/
 RUN make install
 
-FROM ghcr.io/studyfranco/docker-baseimages-debian:testing
+FROM ghcr.io/studyfranco/docker-baseimages-debian:testing-video
 LABEL maintainer="studyfranco@hotmail.fr"
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -70,21 +70,7 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpegthumbs mkvtoolnix ffmpeg --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
-    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
-
-RUN set -x \
-    && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools vainfo intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
-    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
-
-RUN set -x \
-    && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate pulseaudio dolphin dolphin-plugins kdegraphics-thumbnailers mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager kglobalacceld plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix-gui handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools xorgxrdp xutils x11-apps dbus-x11 dbus-user-session dbus-daemon xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular pulseaudio-module-gsettings xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration gdbm-l10n qt*-translations-l10n qttranslations*-l10n qt*-gtk-platformtheme qt*-image-formats-plugins polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 kio-fuse kio-extras fuseiso file genisoimage udftools --no-install-recommends --fix-missing \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate pulseaudio dolphin dolphin-plugins kdegraphics-thumbnailers mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager kglobalacceld plasma-runners-addons gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix-gui handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools xorgxrdp xutils x11-apps dbus-x11 dbus-user-session dbus-daemon xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular pulseaudio-module-gsettings xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration gdbm-l10n qt*-translations-l10n qttranslations*-l10n qt*-gtk-platformtheme qt*-image-formats-plugins polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 kio-fuse kio-extras fuseiso file genisoimage udftools kdenlive frei0r-plugins --no-install-recommends --fix-missing \
     && apt purge -yy xscreensaver light-locker \
     && apt autopurge -yy \
     && apt clean \
