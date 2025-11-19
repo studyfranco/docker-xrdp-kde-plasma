@@ -1,4 +1,4 @@
-FROM ghcr.io/studyfranco/docker-baseimages-debian:testing
+FROM ghcr.io/studyfranco/docker-baseimages-debian:testing-video
 LABEL maintainer="studyfranco@hotmail.fr"
 
 ENV DEBIAN_FRONTEND=noninteractive \
@@ -34,21 +34,7 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y ffmpegthumbs mkvtoolnix ffmpeg --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
-    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
-
-RUN set -x \
-    && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y mesa-utils mesa-va-drivers mesa-vulkan-drivers mesa-opencl-icd libgl1-mesa-dri libglx-mesa0 vulkan-tools vainfo intel-media-va-driver-non-free firmware-intel-graphics firmware-intel-misc intel-opencl-icd --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
-    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
-
-RUN set -x \
-    && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons kglobalacceld gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix-gui handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools xorgxrdp xutils x11-apps dbus-x11 dbus-user-session dbus-daemon xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration gdbm-l10n qt*-translations-l10n qttranslations*-l10n qt*-gtk-platformtheme qt*-image-formats-plugins polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 pipewire-module-xrdp pipewire-audio pipewire pipewire-pulse wireplumber at-spi2-core gstreamer1.0-pipewire kio-fuse kio-extras fuseiso file genisoimage udftools --no-install-recommends --fix-missing \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers mpv vlc plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme *breeze*qt* krename kwalletmanager plasma-runners-addons kglobalacceld gprename firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix-gui handbrake handbrake-cli handbrake-gtk ldap-utils sssd libnss-sss libpam-sss sssd-tools xorgxrdp xutils x11-apps dbus-x11 dbus-user-session dbus-daemon xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration gdbm-l10n qt*-translations-l10n qttranslations*-l10n qt*-gtk-platformtheme qt*-image-formats-plugins polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 pipewire-module-xrdp pipewire-audio pipewire pipewire-pulse wireplumber at-spi2-core gstreamer1.0-pipewire kio-fuse kio-extras fuseiso file genisoimage udftools kdenlive frei0r-plugins --no-install-recommends --fix-missing \
     && apt purge -yy xscreensaver light-locker \
     && apt autopurge -yy \
     && apt clean \
@@ -74,11 +60,13 @@ RUN echo "xdg-user-dirs-update &\n. /etc/default/locale\nmkdir -p /run/user/\$(i
     && cp /etc/skel/.bashrc /root/.bashrc \
     && sed -i "s/AllowRootLogin=true/AllowRootLogin=false/g;" /etc/xrdp/sesman.ini \
     && sed -i "s/KillDisconnected=false/KillDisconnected=true/g;" /etc/xrdp/sesman.ini \
-    && sed -i "s/DisconnectedTimeLimit=0/DisconnectedTimeLimit=172800/g;" /etc/xrdp/sesman.ini \
-    && sed -i "s/IdleTimeLimit=0/IdleTimeLimit=172800/g;" /etc/xrdp/sesman.ini \
     && echo 'allowed_users=anybody' > /etc/X11/Xwrapper.config \
     && usermod -a -G ssl-cert xrdp \
     && echo "LANG=en_US.UTF-8\nLC_TIME=fr_FR.UTF-8" >> /etc/xrdp/sesman.ini
+
+## This modifications create issues:
+#    && sed -i "s/DisconnectedTimeLimit=0/DisconnectedTimeLimit=172800/g;" /etc/xrdp/sesman.ini \
+#    && sed -i "s/IdleTimeLimit=0/IdleTimeLimit=172800/g;" /etc/xrdp/sesman.ini \
 
 # Exposer le port xrdp
 EXPOSE 3389
