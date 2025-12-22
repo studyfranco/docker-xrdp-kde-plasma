@@ -91,5 +91,5 @@ This project is licensed under the GNU Affero General Public License v3.0. See t
 For more information and updates, visit the [GitHub Repository](https://github.com/studyfranco/docker-xrdp-kde-plasma).
 
 ## Last Update
-
+2025-12-22
 2025/12/06
