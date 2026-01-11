@@ -77,7 +77,7 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y fuseiso file genisoimage udftools udfclient gdbm-l10n dbus-daemon --no-install-recommends --fix-missing \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y fuse3 fuseiso file genisoimage udftools udfclient gdbm-l10n dbus-daemon --no-install-recommends --fix-missing \
     && apt autopurge -yy \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
