@@ -107,7 +107,7 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y vlc --no-install-recommends --fix-missing \
+    && DEBIAN_FRONTEND=noninteractive aptitude install -y -o "Aptitude::ProblemResolver::SolutionCost=100*removed-packages, 200*canceled-actions, 50000" vlc --without-recommends \
     && apt autopurge -yy \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
