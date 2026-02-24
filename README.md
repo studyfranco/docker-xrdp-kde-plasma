@@ -1,9 +1,13 @@
 # Docker xRDP + KDE Plasma Remote Desktop Container
 
-[![GitHub stars](https://badgen.net/github/stars/studyfranco/docker-xrdp-kde-plasma?icon=github&label=stars)](https://github.com/studyfranco/docker-xrdp-kde-plasma/stargazers)  
-[![GitHub forks](https://badgen.net/github/forks/studyfranco/docker-xrdp-kde-plasma?icon=github&label=forks)](https://github.com/studyfranco/docker-xrdp-kde-plasma/network)  
-[![GitHub issues](https://badgen.net/github/issues/studyfranco/docker-xrdp-kde-plasma?icon=github&label=issues)](https://github.com/studyfranco/docker-xrdp-kde-plasma/issues)  
+<div align="center">
+
+[![GitHub stars](https://badgen.net/github/stars/studyfranco/docker-xrdp-kde-plasma?icon=github&label=stars)](https://github.com/studyfranco/docker-xrdp-kde-plasma/stargazers)
+[![GitHub forks](https://badgen.net/github/forks/studyfranco/docker-xrdp-kde-plasma?icon=github&label=forks)](https://github.com/studyfranco/docker-xrdp-kde-plasma/network)
+[![GitHub issues](https://badgen.net/github/issues/studyfranco/docker-xrdp-kde-plasma?icon=github&label=issues)](https://github.com/studyfranco/docker-xrdp-kde-plasma/issues)
 [![GitHub last-commit](https://badgen.net/github/last-commit/studyfranco/docker-xrdp-kde-plasma)](https://github.com/studyfranco/docker-xrdp-kde-plasma/commits/master)
+
+</div>
 
 ## Overview
 
@@ -91,4 +95,4 @@ This project is licensed under the GNU Affero General Public License v3.0. See t
 For more information and updates, visit the [GitHub Repository](https://github.com/studyfranco/docker-xrdp-kde-plasma).
 
 ## Last Update
-2026-02-06
+2026-02-24
