@@ -85,7 +85,7 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted fonts-hack fonts-lmodern fonts-freefont-otf fonts-stix fonts-texgyre fonts-texgyre-math fonts-noto-ui-core --no-install-recommends --fix-missing \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y xfonts-base xfonts-cyrillic xfonts-scalable xfonts-intl-japanese xfonts-intl-japanese-big xfonts-intl-chinese xfonts-intl-european fonts-noto fonts-noto-extra fonts-noto-color-emoji fonts-arphic-ukai fonts-arphic-uming fonts-noto-cjk fonts-noto-cjk-extra fonts-noto-ui-extra fonts-noto-unhinted fonts-hack fonts-lmodern fonts-freefont-otf fonts-stix fonts-texgyre fonts-texgyre-math fonts-noto-ui-core fonts-liberation --no-install-recommends --fix-missing \
     && apt autopurge -yy \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
