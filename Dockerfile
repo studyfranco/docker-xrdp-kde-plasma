@@ -5,8 +5,9 @@ FROM ghcr.io/studyfranco/docker-baseimages-debian:testing as builder
 ENV DEBIAN_FRONTEND=noninteractive
 RUN set -x \
     && apt update \
-    && apt dist-upgrade -y \
-    && apt-get -yy install sudo apt-utils git autoconf pkg-config libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex bison libxml2-dev dpkg-dev libcap-dev build-essential cdbs devscripts equivs fakeroot libxkbfile-dev libtool libltdl-dev gcc make automake libpipewire-0.3-dev libspa-0.2-dev
+    && apt-get -yy install sudo apt-utils git autoconf pkg-config libssl-dev libpam0g-dev libx11-dev libxfixes-dev libxrandr-dev nasm xsltproc flex bison libxml2-dev dpkg-dev libcap-dev build-essential cdbs devscripts equivs fakeroot libxkbfile-dev libtool libltdl-dev gcc make automake libpipewire-0.3-dev libspa-0.2-dev --no-install-recommends --fix-missing
+
+#    && apt dist-upgrade -y \ Is maybe useless
 
 # Build xrdp
 
