@@ -112,7 +112,7 @@ RUN echo "xdg-user-dirs-update &\n. /etc/default/locale\nmkdir -p /run/user/\$(i
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y git openssh-client cargo rust-clippy --no-install-recommends --fix-missing \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y git openssh-client cargo rust-clippy rust-src --no-install-recommends --fix-missing \
     && apt autopurge -yy \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
