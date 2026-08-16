@@ -13,10 +13,6 @@ on:
   pull_request:
     branches: [ "master","pipewire","pulseaudio"]
 
-concurrency:
-  group: docker-build-global
-  cancel-in-progress: false
-
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
