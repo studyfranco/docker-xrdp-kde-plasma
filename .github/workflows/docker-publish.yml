@@ -13,6 +13,10 @@ on:
   pull_request:
     branches: [ "master","pipewire","pulseaudio"]
 
+concurrency:
+  group: docker-build-global
+  cancel-in-progress: false
+
 env:
   # Use docker.io for Docker Hub if empty
   REGISTRY: ghcr.io
@@ -33,7 +37,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       # Install the cosign tool except on PR
       # https://github.com/sigstore/cosign-installer
