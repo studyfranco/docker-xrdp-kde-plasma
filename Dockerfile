@@ -175,6 +175,20 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y libchromaprint-tools --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN set -x \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y git python3-dotenv python3-pydantic-settings python3-pip python3-psutil python3-venv --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN set -x \
+    && apt update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y extrepo --no-install-recommends --fix-missing \
     && extrepo enable vscodium \
     && apt update \
