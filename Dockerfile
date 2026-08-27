@@ -19,16 +19,17 @@ RUN apt-get build-dep -yy pulseaudio xrdp \
 WORKDIR /tmp
 RUN git clone --recursive https://github.com/neutrinolabs/xrdp.git
 WORKDIR /tmp/xrdp
-RUN ./bootstrap
-RUN ./configure
-RUN make
-RUN make install
+RUN ./bootstrap \
+    && ./configure CFLAGS="-O2 -Wno-error" \
+    && make \
+    && make install
 WORKDIR /tmp
 RUN  apt -yy install libpulse-dev
 RUN git clone --recursive https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/pulseaudio-module-xrdp
-RUN ./bootstrap && ./configure PULSE_DIR=$(find /tmp -maxdepth 1 -type d -name 'pulseaudio-*[0-9]*' | head -n 1)
-RUN make
+RUN ./bootstrap \
+    && ./configure PULSE_DIR=$(find /tmp -maxdepth 1 -type d -name 'pulseaudio-*[0-9]*' | head -n 1) CFLAGS="-O2 -Wno-error" \
+    && make
 RUN mkdir -p /tmp/so \
     && cp src/.libs/*.so /tmp/so \
     && cp /tmp/pulseaudio-module-xrdp/instfiles/pulseaudio-xrdp.desktop /tmp/so/ \
