@@ -1,4 +1,4 @@
-name: Docker
+name: Docker second
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -6,12 +6,10 @@ name: Docker
 # documentation.
 
 on:
-  push:
-    branches: [ "master","pipewire","pulseaudio"]
-    # Publish semver tags as releases.
-    tags: [ 'v*.*.*' ]
-  pull_request:
-    branches: [ "master","pipewire","pulseaudio"]
+  workflow_run:
+    workflows: ["Docker"]
+    types:
+      - completed
 
 env:
   # Use docker.io for Docker Hub if empty
@@ -24,9 +22,9 @@ jobs:
   build:
     strategy:
       fail-fast: false
-      max-parallel: 1
+      max-parallel: 2
       matrix:
-        branch: [ "master"]
+        branch: [ "pipewire","pulseaudio"]
     runs-on: ubuntu-latest
     permissions:
       contents: read
