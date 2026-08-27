@@ -41,7 +41,7 @@ LABEL maintainer="studyfranco@hotmail.fr"
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager kwallet-pam kglobalacceld plasma-runners-addons gprename xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration polkit-kde-agent-1 xdg-desktop-portal-kde kio-fuse kio-extras pulseaudio pulseaudio-module-gsettings --no-install-recommends --fix-missing \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager kglobalacceld plasma-runners-addons gprename xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration polkit-kde-agent-1 xdg-desktop-portal-kde kio-fuse kio-extras pulseaudio pulseaudio-module-gsettings --no-install-recommends --fix-missing \
     && apt purge -yy xscreensaver light-locker \
     && apt autopurge -yy \
     && apt clean \
@@ -131,9 +131,8 @@ RUN set -x \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
-RUN install -d -m 0755 /etc/apt/keyrings
-
-RUN set -x \
+RUN install -d -m 0755 /etc/apt/keyrings \
+    && set -x \
     && curl -fsSLo /etc/apt/keyrings/claude-desktop-archive-keyring.asc https://downloads.claude.ai/claude-desktop/key.asc \
     && echo "deb [arch=amd64,arm64 signed-by=/etc/apt/keyrings/claude-desktop-archive-keyring.asc] https://downloads.claude.ai/claude-desktop/apt/stable stable main" | tee /etc/apt/sources.list.d/claude-desktop.list \
     && apt update \
@@ -141,9 +140,6 @@ RUN set -x \
     && apt autopurge -yy \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
-
-# Exposer le port xrdp
-EXPOSE 3389
 
 COPY --chmod=0755 entrypoint.sh /entrypoint.sh
 CMD ["/entrypoint.sh"]
