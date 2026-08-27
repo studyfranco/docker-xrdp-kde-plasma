@@ -64,6 +64,7 @@ RUN set -x \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
+# Essential software #
 RUN set -x \
     && apt update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y build-essential jq rsync zip 7zip pkg-config openssl --no-install-recommends --fix-missing \
@@ -71,6 +72,39 @@ RUN set -x \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
+# The essentials dev tools app #
+RUN set -x \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y git openssh-client cargo rust-clippy rust-src --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN set -x \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y libchromaprint-tools --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN set -x \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y python3-dotenv python3-pydantic-settings python3-pip python3-psutil python3-venv --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN install -d -m 0755 /etc/apt/keyrings \
+    && set -x \
+    && curl -fsSL https://downloads.claude.ai/keys/claude-code.asc -o /etc/apt/keyrings/claude-code.asc \
+    && echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" | tee /etc/apt/sources.list.d/claude-code.list \
+    && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y claude-code --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+# The auth app for ldap #
 RUN set -x \
     && apt update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y ldap-utils sssd libnss-sss libpam-sss sssd-tools --no-install-recommends --fix-missing \
@@ -169,27 +203,6 @@ RUN echo "xdg-user-dirs-update &\n. /etc/default/locale\nmkdir -p /run/user/\$(i
 
 RUN set -x \
     && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y git openssh-client cargo rust-clippy rust-src --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
-    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
-
-RUN set -x \
-    && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y libchromaprint-tools --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
-    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
-
-RUN set -x \
-    && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y git python3-dotenv python3-pydantic-settings python3-pip python3-psutil python3-venv --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
-    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
-
-RUN set -x \
-    && apt update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y extrepo --no-install-recommends --fix-missing \
     && extrepo enable vscodium \
     && apt update \
@@ -205,15 +218,6 @@ RUN set -x \
     && echo "deb [arch=amd64,arm64 signed-by=/etc/apt/keyrings/claude-desktop-archive-keyring.asc] https://downloads.claude.ai/claude-desktop/apt/stable stable main" | tee /etc/apt/sources.list.d/claude-desktop.list \
     && apt update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y claude-desktop --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
-    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
-
-RUN set -x \
-    && curl -fsSL https://downloads.claude.ai/keys/claude-code.asc -o /etc/apt/keyrings/claude-code.asc \
-    && echo "deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/stable stable main" | tee /etc/apt/sources.list.d/claude-code.list \
-    && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y claude-code --no-install-recommends --fix-missing \
     && apt autopurge -yy \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
