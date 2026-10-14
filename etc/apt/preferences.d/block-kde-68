@@ -1,0 +1,11 @@
+Package: /^plasma.*/
+Pin: version /^([0-9]+:)?6\.7\..*/
+Pin-Priority: 1001
+
+Package: /^plasma.*/
+Pin: release o=file:/opt/empty-repo
+Pin-Priority: 1002
+
+Package: /^plasma.*/
+Pin: version /^([0-9]+:)?6\..\..*/
+Pin-Priority: -10
