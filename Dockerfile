@@ -17,6 +17,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
     LC_TELEPHONE=fr_FR.UTF-8 \
     LC_TIME=fr_FR.UTF-8
 
+ADD --chmod=0755 etc/skel /etc/skel
+ADD --chmod=0644 etc/apt/preferences.d/block-kde-68 etc/apt/preferences.d/
+
 RUN set -x \
     && rm -f /etc/dpkg/dpkg.cfg.d/excludes \
     && echo "de_DE.UTF-8 UTF-8\nen_GB.UTF-8 UTF-8\nen_US.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nru_RU.UTF-8 UTF-8" >> /etc/locale.gen \
