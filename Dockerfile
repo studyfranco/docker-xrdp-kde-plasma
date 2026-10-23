@@ -26,6 +26,13 @@ RUN set -x \
 
 RUN set -x \
     && apt update \
+    && DEBIAN_FRONTEND=noninteractive apt-get install -y kompare --no-install-recommends --fix-missing \
+    && apt autopurge -yy \
+    && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN set -x \
+    && apt update \
     && DEBIAN_FRONTEND=noninteractive aptitude install -y -o "Aptitude::ProblemResolver::SolutionCost=100*removed-packages, 200*canceled-actions, 50000" mpv --without-recommends \
     && apt autopurge -yy \
     && apt clean \
@@ -83,6 +90,10 @@ RUN install -d -m 0755 /etc/apt/keyrings \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y claude-desktop --no-install-recommends --fix-missing \
     && apt autopurge -yy \
     && apt clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
+
+RUN curl -fsSLo /tmp/goose_amd64.deb https://github.com/aaif-goose/goose/releases/download/v1.56.0/goose_1.56.0_amd64.deb \
+    && dpkg -i /tmp/goose_amd64.deb \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
 COPY --chmod=0755 entrypoint.sh /entrypoint.sh
