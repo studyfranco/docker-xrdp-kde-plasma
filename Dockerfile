@@ -36,7 +36,7 @@ RUN set -x \
 # Essential software #
 RUN set -x \
     && apt-get update \
-    && apt-get install -y build-essential jq rsync pkg-config openssl acl --no-install-recommends \
+    && apt-get install -y build-essential jq rsync pkg-config openssl acl aptitude --no-install-recommends \
     && apt autopurge -yy \
     && apt clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
