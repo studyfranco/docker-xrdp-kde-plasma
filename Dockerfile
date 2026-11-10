@@ -52,7 +52,7 @@ RUN set -eux \
 # The essentials dev tools app #
 RUN set -eux \
     && apt-get update \
-    && apt-get install -y git openssh-client cargo rust-clippy rust-src rustfmt --no-install-recommends \
+    && apt-get install -y git openssh-client cargo rust-clippy rust-src rustfmt cargo-audit --no-install-recommends \
     && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
