@@ -1,48 +1,50 @@
 FROM ghcr.io/studyfranco/docker-xrdp-kde-plasma:master
 LABEL maintainer="studyfranco@hotmail.fr"
 
-RUN set -x \
-    && apt update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager plasma-runners-addons kglobalacceld gprename xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 pipewire-module-xrdp pipewire-audio pipewire pipewire-pulse wireplumber at-spi2-core gstreamer1.0-pipewire kio-fuse kio-extras --no-install-recommends --fix-missing \
-    && apt purge -yy xscreensaver light-locker \
-    && apt autopurge -yy \
-    && apt clean \
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN set -eux \
+    && apt-get update \
+    && apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager plasma-runners-addons kglobalacceld gprename xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 pipewire-module-xrdp pipewire-audio pipewire pipewire-pulse wireplumber at-spi2-core gstreamer1.0-pipewire kio-fuse kio-extras --no-install-recommends --fix-missing \
+    && apt-get remove --purge xscreensaver light-locker \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/* \
     && mv /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.old
 
-RUN set -x \
-    && apt update \
+RUN set -eux \
+    && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y kdenlive frei0r-plugins --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
-RUN set -x \
-    && apt update \
+RUN set -eux \
+    && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y firefox-esr firefox-esr-l10n-fr firefox-esr-l10n-de firefox-esr-l10n-ru mediainfo-gui mkvtoolnix-gui handbrake handbrake-gtk acetoneiso chromium chromium-driver chromium-sandbox --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
-RUN set -x \
-    && apt update \
+RUN set -eux \
+    && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y kompare --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
-RUN set -x \
-    && apt update \
+RUN set -eux \
+    && apt-get update \
     && DEBIAN_FRONTEND=noninteractive aptitude install -y -o "Aptitude::ProblemResolver::SolutionCost=100*removed-packages, 200*canceled-actions, 50000" mpv --without-recommends \
-    && apt autopurge -yy \
-    && apt clean \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
-RUN set -x \
-    && apt update \
+RUN set -eux \
+    && apt-get update \
     && DEBIAN_FRONTEND=noninteractive aptitude install -y -o "Aptitude::ProblemResolver::SolutionCost=100*removed-packages, 200*canceled-actions, 50000" vlc --without-recommends \
-    && apt autopurge -yy \
-    && apt clean \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
 ADD --chmod=0755 wallpapers /usr/share/wallpapers
@@ -72,27 +74,27 @@ RUN echo "xdg-user-dirs-update &\n. /etc/default/locale\nmkdir -p /run/user/\$(i
 #    && DEBIAN_FRONTEND=noninteractive apt-get install -y antigravity
 
 
-RUN set -x \
-    && apt update \
+RUN set -eux \
+    && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y extrepo --no-install-recommends --fix-missing \
     && extrepo enable vscodium \
     && apt update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y codium --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
 RUN install -d -m 0755 /etc/apt/keyrings \
-    && set -x \
+    && set -eux \
     && curl -fsSLo /etc/apt/keyrings/claude-desktop-archive-keyring.asc https://downloads.claude.ai/claude-desktop/key.asc \
     && echo "deb [arch=amd64,arm64 signed-by=/etc/apt/keyrings/claude-desktop-archive-keyring.asc] https://downloads.claude.ai/claude-desktop/apt/stable stable main" | tee /etc/apt/sources.list.d/claude-desktop.list \
-    && apt update \
+    && apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y claude-desktop --no-install-recommends --fix-missing \
-    && apt autopurge -yy \
-    && apt clean \
+    && apt-get autoremove --purge -y \
+    && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
-RUN curl -fsSLo /tmp/goose_amd64.deb https://github.com/aaif-goose/goose/releases/download/v1.56.0/goose_1.56.0_amd64.deb \
+RUN curl -fsSLo /tmp/goose_amd64.deb https://github.com/aaif-goose/goose/releases/download/v1.59.0/goose_1.59.0_amd64.deb \
     && dpkg -i /tmp/goose_amd64.deb \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
