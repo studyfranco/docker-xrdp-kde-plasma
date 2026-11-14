@@ -52,9 +52,9 @@ services:
       - /path/to/home:/home/user
     tmpfs:
       - "/run:exec,mode=777"
-      - "/tmp:exec,mode=777"
+      - "/tmp:exec,mode=1777"
       - "/tmp/dumps:exec,mode=777"
-      - "/var/tmp:exec,mode=777"
+      - "/var/tmp:exec,mode=1777"
     restart: "unless-stopped"
     devices:
       - /dev/dri:/dev/dri

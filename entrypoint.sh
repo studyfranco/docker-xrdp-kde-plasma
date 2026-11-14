@@ -8,7 +8,9 @@ start_xrdp_services() {
     rm -rf /var/run/xrdp/xrdp.pid 2> /dev/null
 
     # Use exec ... to forward SIGNAL to child processes
-    rm -rf /run/dbus/*; mkdir -p /run/dbus && dbus-daemon --system --fork &
+    rm -rf /run/dbus/*
+    mkdir -p /run/dbus && chown messagebus:messagebus /run/dbus
+    dbus-daemon --system --fork
     sleep 2 && /usr/libexec/udisks2/udisksd --no-debug &
     mkdir -p /var/log/sssd && /usr/sbin/sssd -d 0x0100 --logger=files -D &
     xrdp-sesman &
@@ -53,12 +55,10 @@ add_groups_essentials() {
 
 echo Entryponit script is Running...
 
-add_perif_group &
-add_groups_essentials &
-mkdir -p /run/user && chmod 777 /run/user &
-mkdir -p /var/run/dbus && chown messagebus:messagebus /var/run/dbus &
-dbus-uuidgen > /var/lib/dbus/machine-id &
-/usr/lib/udisks2/udisksd --no-debug &
+add_perif_group && add_groups_essentials &
+mkdir -p /run/user && chmod 1777 /run/user
+mkdir -p /var/run/dbus && chown messagebus:messagebus /var/run/dbus
+dbus-uuidgen > /var/lib/dbus/machine-id
 
 echo -e "starting xrdp services...\n"
 if [ ! -f "/etc/xrdp/cert_local.pem" ]; then

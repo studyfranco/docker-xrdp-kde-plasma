@@ -4,13 +4,21 @@ LABEL maintainer="studyfranco@hotmail.fr"
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN set -eux \
+    && if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then sed -i 's|^path-exclude[=[:space:]]\+/usr/share/locale/\*|# &|' /etc/dpkg/dpkg.cfg.d/docker; fi \
     && apt-get update \
-    && apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager plasma-runners-addons kglobalacceld gprename xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 pipewire-module-xrdp pipewire-audio pipewire pipewire-pulse wireplumber at-spi2-core gstreamer1.0-pipewire kio-fuse kio-extras --no-install-recommends --fix-missing \
+    && apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager plasma-runners-addons kglobalacceld gprename xorgxrdp xutils x11-apps x11-xkb-utils dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 pipewire-module-xrdp pipewire-audio pipewire pipewire-pulse wireplumber pulseaudio-utils at-spi2-core gstreamer1.0-pipewire kio-fuse kio-extras --no-install-recommends --fix-missing \
     && apt-get remove --purge xscreensaver light-locker \
     && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/* \
     && mv /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.old
+
+# Installation des traductions Qt6 après l'environnement de bureau
+RUN set -eux \
+    && apt-get update \
+    && apt-get install -y qt6-translations-l10n --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
 RUN set -eux \
     && apt-get update \
@@ -52,9 +60,11 @@ ADD --chmod=0755 etc/skel /etc/skel
 ADD --chmod=0755 etc/xrdp /etc/xrdp
 COPY --chmod=0644 etc/pam.d/xrdp-sesman /etc/pam.d/xrdp-sesman
 
-# Configuration de la session KDE Plasma pour xrdp
-RUN echo "xdg-user-dirs-update &\n. /etc/default/locale\nmkdir -p /run/user/\$(id -u) && chmod 700 /run/user/\$(id -u)\nexport XDG_RUNTIME_DIR=/run/user/\$(id -u)\nrm -rf /run/user/\$(id -u)/*\nexec dbus-launch --exit-with-session /usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1 &\nexec dbus-launch --exit-with-session pipewire &\nexec dbus-launch --exit-with-session wireplumber &\nexec dbus-launch --exit-with-session pipewire-pulse &\nxset s off && xset s noblank && xset -dpms\nexec dbus-launch --exit-with-session startplasma-x11" > /etc/skel/.xsession \
-    && cp /etc/skel/.xsession /root/ \
+# Configuration de la session KDE Plasma pour xrdp et outil de redémarrage du presse-papiers
+RUN printf '%s\n' '#!/bin/sh' 'pkill -u "$(id -u)" -x xrdp-chansrv >/dev/null 2>&1 || true' 'sleep 0.3' 'nohup /usr/sbin/xrdp-chansrv >/dev/null 2>&1 &' > /usr/local/bin/restart-xrdp-clipboard \
+    && chmod 0755 /usr/local/bin/restart-xrdp-clipboard \
+    && printf '%s\n' '[Desktop Entry]' 'Type=Application' 'Name=Restart xrdp clipboard' 'Name[fr]=Redémarrer le presse-papiers xrdp' 'Comment=Restart xrdp-chansrv when copy/paste stalls' 'Comment[fr]=Relance xrdp-chansrv si le copier-coller se bloque' 'Exec=/usr/local/bin/restart-xrdp-clipboard' 'Icon=edit-paste' 'Terminal=false' 'Categories=System;Utility;' > /usr/share/applications/restart-xrdp-clipboard.desktop \
+    && chmod 0644 /usr/share/applications/restart-xrdp-clipboard.desktop \
     && echo "export XDG_RUNTIME_DIR=/run/user/\$(id -u)" >> /etc/skel/.bashrc \
     && cp /etc/skel/.bashrc /root/.bashrc \
     && sed -i "s/AllowRootLogin=true/AllowRootLogin=false/g;" /etc/xrdp/sesman.ini \
