@@ -22,7 +22,7 @@ ADD --chmod=0755 etc/skel /etc/skel
 ADD --chmod=0644 etc/apt/preferences.d/block-kde-68 etc/apt/preferences.d/
 
 RUN set -eux \
-    && rm -f /etc/dpkg/dpkg.cfg.d/excludes \
+    && if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then sed -i 's|^path-exclude[=[:space:]]\+/usr/share/locale/\*|# &|' /etc/dpkg/dpkg.cfg.d/docker; fi \
     && echo "de_DE.UTF-8 UTF-8\nen_GB.UTF-8 UTF-8\nen_US.UTF-8 UTF-8\nfr_FR.UTF-8 UTF-8\nru_RU.UTF-8 UTF-8" >> /etc/locale.gen \
     && echo "LANG=en_US.UTF-8\nLC_MESSAGES=en_US.UTF-8\nLC_TIME=fr_FR.UTF-8\nLANGUAGE=" > /etc/default/locale \
     && dpkg-reconfigure --frontend=noninteractive locales \
