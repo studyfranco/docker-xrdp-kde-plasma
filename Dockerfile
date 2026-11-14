@@ -28,7 +28,7 @@ RUN  apt-get -y install libpulse-dev
 RUN git clone --recursive https://github.com/neutrinolabs/pulseaudio-module-xrdp.git
 WORKDIR /tmp/pulseaudio-module-xrdp
 RUN ./bootstrap \
-    && ./configure PULSE_DIR=$(find /tmp -maxdepth 1 -type d -name 'pulseaudio-*[0-9]*' | head -n 1) \
+    && ./configure --prefix=/usr PULSE_DIR=$(find /tmp -maxdepth 1 -type d -name 'pulseaudio-*[0-9]*' | head -n 1) \
     && make
 RUN mkdir -p /tmp/so \
     && cp src/.libs/*.so /tmp/so \
@@ -41,13 +41,21 @@ LABEL maintainer="studyfranco@hotmail.fr"
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN set -eux \
+    && if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then sed -i 's|^path-exclude[=[:space:]]\+/usr/share/locale/\*|# &|' /etc/dpkg/dpkg.cfg.d/docker; fi \
     && apt-get update \
-    && apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager kglobalacceld plasma-runners-addons gprename xorgxrdp xutils x11-apps dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration polkit-kde-agent-1 xdg-desktop-portal-kde kio-fuse kio-extras pulseaudio pulseaudio-module-gsettings --no-install-recommends \
+    && apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager kglobalacceld plasma-runners-addons gprename xorgxrdp xutils x11-apps x11-xkb-utils dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration polkit-kde-agent-1 xdg-desktop-portal-kde kio-fuse kio-extras pulseaudio pulseaudio-module-gsettings --no-install-recommends \
     && apt-get remove --purge xscreensaver light-locker \
     && apt-get autoremove --purge -y \
     && apt-get clean \
     && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/* \
     && mv /etc/xrdp/xrdp.ini /etc/xrdp/xrdp.ini.old
+
+# Installation des traductions Qt6 après l'environnement de bureau
+RUN set -eux \
+    && apt-get update \
+    && apt-get install -y qt6-translations-l10n --no-install-recommends \
+    && apt-get clean \
+    && rm -rf /var/cache/* /var/lib/apt/lists/* /var/log/* /var/tmp/* /tmp/*
 
 RUN set -eux \
     && apt-get update \
@@ -87,7 +95,7 @@ RUN set -eux \
 RUN set -x \
     && mkdir -p /var/lib/xrdp-pulseaudio-installer \
     && mkdir -p /usr/lib/pulse-compiled/modules \
-    && mkdir -p /usr/local/libexec/pulseaudio-module-xrdp
+    && mkdir -p /usr/libexec/pulseaudio-module-xrdp
 
 COPY --from=builder /tmp/so/module-xrdp-source.so /var/lib/xrdp-pulseaudio-installer
 COPY --from=builder /tmp/so/module-xrdp-sink.so /var/lib/xrdp-pulseaudio-installer
@@ -99,17 +107,14 @@ ADD --chmod=0755 etc/skel /etc/skel
 ADD --chmod=0755 etc/xrdp /etc/xrdp
 COPY --chmod=0644 etc/pam.d/xrdp-sesman /etc/pam.d/xrdp-sesman
 
-RUN mkdir -p /usr/libexec/pulseaudio-module-xrdp \
-    && wget -O- https://raw.githubusercontent.com/neutrinolabs/pulseaudio-module-xrdp/refs/heads/devel/instfiles/load_pa_modules.sh | tee /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh \
-    && chmod +x /usr/libexec/pulseaudio-module-xrdp/load_pa_modules.sh \
-    && wget -O- https://raw.githubusercontent.com/neutrinolabs/pulseaudio-module-xrdp/refs/heads/devel/instfiles/pulseaudio-xrdp.desktop.in | tee /etc/xdg/autostart/pulseaudio-xrdp.desktop
+COPY --chmod=0644 --from=builder /tmp/so/pulseaudio-xrdp.desktop /etc/xdg/autostart/
+COPY --chmod=0755 --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xrdp/
 
-COPY --from=builder /tmp/so/pulseaudio-xrdp.desktop /etc/xdg/autostart
-COPY --from=builder /tmp/so/load_pa_modules.sh /usr/libexec/pulseaudio-module-xrdp
-
-# Configuration de la session KDE Plasma pour xrdp
-RUN echo "xdg-user-dirs-update &\n. /etc/default/locale\nmkdir -p /run/user/\$(id -u) && chmod 700 /run/user/\$(id -u)\nexport XDG_RUNTIME_DIR=/run/user/\$(id -u)\nrm -rf /run/user/\$(id -u)/*\nexec dbus-launch --exit-with-session /usr/lib/x86_64-linux-gnu/libexec/polkit-kde-authentication-agent-1 &\npulseaudio --start &\nexec dbus-launch --exit-with-session startplasma-x11" > /etc/skel/.xsession \
-    && cp /etc/skel/.xsession /root/ \
+# Configuration de la session KDE Plasma pour xrdp et outil de redémarrage du presse-papiers
+RUN printf '%s\n' '#!/bin/sh' 'pkill -u "$(id -u)" -x xrdp-chansrv >/dev/null 2>&1 || true' 'sleep 0.3' 'nohup /usr/sbin/xrdp-chansrv >/dev/null 2>&1 &' > /usr/local/bin/restart-xrdp-clipboard \
+    && chmod 0755 /usr/local/bin/restart-xrdp-clipboard \
+    && printf '%s\n' '[Desktop Entry]' 'Type=Application' 'Name=Restart xrdp clipboard' 'Name[fr]=Redémarrer le presse-papiers xrdp' 'Comment=Restart xrdp-chansrv when copy/paste stalls' 'Comment[fr]=Relance xrdp-chansrv si le copier-coller se bloque' 'Exec=/usr/local/bin/restart-xrdp-clipboard' 'Icon=edit-paste' 'Terminal=false' 'Categories=System;Utility;' > /usr/share/applications/restart-xrdp-clipboard.desktop \
+    && chmod 0644 /usr/share/applications/restart-xrdp-clipboard.desktop \
     && echo "export XDG_RUNTIME_DIR=/run/user/\$(id -u)" >> /etc/skel/.bashrc \
     && cp /etc/skel/.bashrc /root/.bashrc \
     && sed -i "s/AllowRootLogin=true/AllowRootLogin=false/g;" /etc/xrdp/sesman.ini \
