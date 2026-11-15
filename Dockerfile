@@ -4,7 +4,6 @@ LABEL maintainer="studyfranco@hotmail.fr"
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN set -eux \
-    && if [ -f /etc/dpkg/dpkg.cfg.d/docker ]; then sed -i 's|^path-exclude[=[:space:]]\+/usr/share/locale/\*|# &|' /etc/dpkg/dpkg.cfg.d/docker; fi \
     && apt-get update \
     && apt-get install -y xrdp kwin-addons kwin-x11 kwin-style-breeze kate dolphin dolphin-plugins kdegraphics-thumbnailers plasma-desktop plasma-workspace plasma-wallpapers-addons plasma-workspace-wallpapers plasma-browser-integration plasma-pa konsole kfind kdialog breeze breeze-gtk-theme breeze-cursor-theme krename kwalletmanager plasma-runners-addons kglobalacceld gprename xorgxrdp xutils x11-apps x11-xkb-utils dbus-x11 dbus-user-session xprintidle xloadimage xauth xdg-user-dirs xdg-utils plasma-systemmonitor systemsettings ark okular xsettings-kde kde-config-gtk-style kde-config-screenlocker kwayland-integration polkit-kde-agent-1 xdg-desktop-portal-kde udisks2 pipewire-module-xrdp pipewire-audio pipewire pipewire-pulse wireplumber pulseaudio-utils at-spi2-core gstreamer1.0-pipewire kio-fuse kio-extras --no-install-recommends --fix-missing \
     && apt-get remove --purge xscreensaver light-locker \
